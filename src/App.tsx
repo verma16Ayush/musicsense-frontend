@@ -1,25 +1,79 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
+import React, { useState } from "react";
+import MusicNoteRoundedIcon from "@mui/icons-material/MusicNoteRounded";
+import { Box, Card, Divider, Typography } from "@mui/material";
+import "./app.css";
+import { ResultModal } from "./result_modal";
+import { getResults } from "./getres";
 function App() {
+  const [recording, setRecording] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [res, setRes] = useState<IResType[]>();
+
+  const handleClick = () => {
+    setRecording(true);
+    getResults().then(response=>{
+      setRes(response);
+      console.log(response);
+      setRecording(false);
+    }).then(()=>setModalOpen(true))
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <Box
+      className='App'
+      sx={{
+        backgroundColor: "#F0F0F0",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          height: "100%",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
+        <Typography
+          sx={{
+            display: "flex",
+            align: "start",
+            m: 2,
+            justifyContent: "center",
+            fontSize: "30px",
+            fontFamily: "quicksand",
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          MusicSense
+        </Typography>
+        <Divider />
+        <Box sx={{ flex: 1, display: "flex", alignItems: "center" }}>
+          <Card
+            // elevation={recording ? '' : 12}
+            className={recording ? "card" : ""}
+            onClick={() => handleClick()}
+            sx={{
+              width: "20em",
+              height: "20em",
+              borderRadius: "50%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#0A4D68",
+              cursor: "pointer",
+            }}
+          >
+            <MusicNoteRoundedIcon
+              className={recording ? "icon" : ""}
+              sx={{ fontSize: "250px", color: "white" }}
+            />
+          </Card>
+        </Box>
+      </Box>
+      <ResultModal modalOpen={modalOpen} res={res || []} setModalOpen={setModalOpen} />
+    </Box>
   );
 }
 
